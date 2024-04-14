@@ -97,10 +97,10 @@ function getPolynom(...args) {
   if (length < 0) {
     return null;
   }
-  return (x) =>
+  return (value) =>
     args.reduce((acc, num, i) => {
       let total = acc;
-      total += num * x ** (length - i);
+      total += num * value ** (length - i);
       return total;
     }, 0);
 }
@@ -147,8 +147,19 @@ function memoize(func) {
  * }, 2);
  * retryer() => 2
  */
-function retry(/* func, attempts */) {
-  throw new Error('Not implemented');
+function retry(func, attempts) {
+  return function retryer() {
+    for (let i = 0; i < attempts; i += 1) {
+      try {
+        return func();
+      } catch (error) {
+        if (i === attempts - 1) {
+          return error;
+        }
+      }
+    }
+    return undefined;
+  };
 }
 
 /**
